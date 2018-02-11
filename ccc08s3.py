@@ -1,4 +1,5 @@
 #ccc08s3
+import queue
 
 num_cases = int(input())
 
@@ -12,53 +13,40 @@ for case in range(num_cases):
 		grid.append(list(input()))
 
 	solved = set()
-	queue = [(0, 0)]
-	graph = {}
+	q = queue.Queue()
 
-	def add_(thing):
-		global queue
+	q.put((0, 0, 1))
 
-		if thing not in solved:
-			queue.append(thing)
+	broken = False
 
-	print("CASE "+ str(case) + "\n")
-
-	while queue:
-		x, y = queue[0]
-		solved.add(queue[0])
-		del queue[0]
+	while not q.empty():
+		x, y, c = q.get()
+		solved.add((x, y))
 
 		char  = grid[x][y]
-		graph[(x, y)] = set()
 
 		if x == width - 1 and y == height - 1:
-			print("Done")
+			print(c)
+			broken = True
 			break
 
-		if char == '|' or char == '+':
+		if char == '-' or char == '+':
 			if y - 1 > -1 and grid[x][y - 1] != '*':
-				graph[(x, y)].add((x, y - 1))
-				add_((x, y - 1))
-
-				print("UP")
+				if (x, y - 1) not in solved:
+					q.put((x, y - 1, c + 1))
 
 			if y + 1 < height and grid[x][y + 1] != '*':
-				graph[(x, y)].add((x, y + 1))
-				add_((x, y + 1))
+				if (x, y + 1) not in solved:
+					q.put((x, y + 1, c + 1))
 
-				print("DOWN")
-
-		if char == '-' or char == '+':
+		if char == '|' or char == '+':
 			if x - 1 > -1 and grid[x - 1][y] != '*':
-				graph[(x, y)].add((x - 1, y))
-				add_((x - 1, y))
-
-				print("LEFT")
+				if (x - 1, y) not in solved:
+					q.put((x - 1, y, c + 1))
 
 			if x + 1 < width and grid[x + 1][y] != '*':
-				graph[(x, y)].add((x + 1, y))
-				add_((x + 1, y))
+				if (x + 1, y) not in solved:
+					q.put((x + 1, y, c + 1))
 
-				print("RIGHT")
-
-	print(graph)
+	if not broken:
+			print(-1)
