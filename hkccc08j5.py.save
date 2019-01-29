@@ -1,0 +1,12 @@
+import sys
+input = sys.stdin.readline
+
+n = int(input())
+
+for _ in range(n):
+	line = input()
+
+	valid = abs(line.count('X') - line.count('O')) <= 1
+
+
+	print('yes' if valid else 'no')
